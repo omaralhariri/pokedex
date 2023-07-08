@@ -4,12 +4,20 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/omaralhariri/pokedex/internal/pokeapi"
 )
+
+type config struct {
+	pokeapiClient        pokeapi.Client
+	nextLocationsURL     *string
+	previousLocationsURL *string
+}
 
 type cliCommand struct {
 	name     string
 	desc     string
-	callback func(*Config) error
+	callback func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -37,13 +45,7 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-func startRepl() {
-	config := Config{
-		Endpoint: "https://pokeapi.co/api/v2/location",
-		Next:     "",
-		Previous: "",
-	}
-
+func startRepl(cfg *config) {
 	for {
 		fmt.Print("Pokedex > ")
 		input := bufio.NewScanner(os.Stdin)
@@ -53,7 +55,11 @@ func startRepl() {
 		if !exists {
 			fmt.Println("Not a valid command")
 			continue
-		}
-		command.callback(&config)
+		} else {
+            err := command.callback(cfg)
+            if err != nil {
+                fmt.Println(err)
+            }
+        }
 	}
 }

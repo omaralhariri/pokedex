@@ -4,15 +4,18 @@ import (
 	"fmt"
 )
 
-func mapCommand(config *Config) error {
-	if config.Next != "" && config.Previous == "" {
-		config.Endpoint = config.Next
-	}
-	res := getPoke(config)
-	for _, v := range res.Results {
+func mapCommand(cfg *config) error {
+    locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
+    if err != nil {
+        return err
+    }
+	
+    cfg.nextLocationsURL = locationsResp.Next
+	cfg.previousLocationsURL = locationsResp.Previous
+	
+	for _, v := range locationsResp.Results {
 		fmt.Println(v.Name)
 	}
-	config.Next = res.Next
-	config.Previous = res.Previous
-	return nil
+	
+    return nil
 }

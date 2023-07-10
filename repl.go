@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-    "strings"
+	"strings"
 
 	"github.com/omaralhariri/pokedex/internal/pokeapi"
 )
@@ -58,11 +58,11 @@ func getCommands() map[string]cliCommand {
 			desc:     "Inspect the entered pokemon name",
 			callback: inspectCommand,
 		},
-        "pokedex": {
-            name: "pokedex",
-            desc: "Show caught pokes",
-            callback: pokedexCommand,
-        },
+		"pokedex": {
+			name:     "pokedex",
+			desc:     "Show caught pokes",
+			callback: pokedexCommand,
+		},
 	}
 }
 
@@ -72,35 +72,35 @@ func startRepl(cfg *config) {
 		input := bufio.NewScanner(os.Stdin)
 		input.Scan()
 		words := input.Text()
-        words_slice := strings.Split(words, " ")
-        word := words_slice[0]
+		words_slice := strings.Split(words, " ")
+		word := words_slice[0]
 		command, exists := getCommands()[word]
 		if !exists {
 			fmt.Println("Not a valid command")
 			continue
 		} else {
-            var area string
-            if word == "explore" {
-                if len(words_slice) < 2 {
-                    fmt.Println("You have to provide an area to explore")
-                    continue
-                }
-                area = words_slice[1]
-            }
+			var area string
+			if word == "explore" {
+				if len(words_slice) < 2 {
+					fmt.Println("You have to provide an area to explore")
+					continue
+				}
+				area = words_slice[1]
+			}
 
-            if word == "catch" || word == "inspect" {
-                if len(words_slice) < 2 {
-                    fmt.Println("You have to provide a pokemon name to catch")
-                    continue
-                }
-                poke := words_slice[1]
-                area = poke
-            }
+			if word == "catch" || word == "inspect" {
+				if len(words_slice) < 2 {
+					fmt.Println("You have to provide a pokemon name to catch")
+					continue
+				}
+				poke := words_slice[1]
+				area = poke
+			}
 
-            err := command.callback(cfg, area)
-            if err != nil {
-                fmt.Println(err)
-            }
-        }
+			err := command.callback(cfg, area)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
 	}
 }

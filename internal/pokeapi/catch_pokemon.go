@@ -25,7 +25,7 @@ func (c *Client)  CatchPokemon(pokename string) (string, error) {
         if ! catchPoke(respCatch) {
             return "", errors.New(pokename + " escaped!")
         }
-
+        storeCaught(pokename, c)
         c.cache.Add(pokename, val)
         return pokename + " was caught!", nil
     }
@@ -57,7 +57,8 @@ func (c *Client)  CatchPokemon(pokename string) (string, error) {
     if ! catchPoke(respCatch) {
         return "", errors.New(pokename + " escaped!")
     }
-
+    
+    storeCaught(pokename, c)
     c.cache.Add(pokename, body)
 
     return pokename + " was caught!", nil
@@ -68,4 +69,14 @@ func catchPoke(respCatch RespCatch) bool {
     chance := rand.Intn(100 + respCatch.BaseExperience)
 
     return chance > respCatch.BaseExperience
+}
+
+func storeCaught(pokename string, c *Client) {
+    if val, ok := c.cache.Get("caught_pokes"); ok {
+        up := string(val) + " " + pokename
+        up_bytes := []byte(up)
+        c.cache.Add("caught_pokes", up_bytes)
+    } else {
+        c.cache.Add("caught_pokes", []byte(pokename))
+    }
 }

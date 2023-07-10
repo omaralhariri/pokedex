@@ -53,6 +53,11 @@ func getCommands() map[string]cliCommand {
 			desc:     "Catch the entered pokemon name",
 			callback: catchCommand,
 		},
+		"inspect": {
+			name:     "inspect",
+			desc:     "Inspect the entered pokemon name",
+			callback: inspectCommand,
+		},
 	}
 }
 
@@ -78,7 +83,7 @@ func startRepl(cfg *config) {
                 area = words_slice[1]
             }
 
-            if word == "catch" {
+            if word == "catch" || word == "inspect" {
                 if len(words_slice) < 2 {
                     fmt.Println("You have to provide a pokemon name to catch")
                     continue

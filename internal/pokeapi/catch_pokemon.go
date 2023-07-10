@@ -2,7 +2,6 @@ package pokeapi
 
 import (
     "io"
-    "fmt"
     "net/http"
     "errors"
     "encoding/json"
@@ -11,6 +10,25 @@ import (
 
 func (c *Client)  CatchPokemon(pokename string) (string, error) {
     url := baseURL + "/pokemon/" + pokename
+
+    if _, ok := c.cache.Get(pokename); ok {
+        return pokename + " was caught!", nil
+    }
+    
+    if val, ok := c.cache.Get(url); ok {
+        respCatch := RespCatch{}
+        err := json.Unmarshal(val, &respCatch)
+        if err != nil {
+            return "", err
+        }
+
+        if ! catchPoke(respCatch) {
+            return "", errors.New(pokename + " escaped!")
+        }
+
+        c.cache.Add(pokename, val)
+        return pokename + " was caught!", nil
+    }
 
     req, err := http.NewRequest("GET", url, nil)
     if err != nil {
@@ -34,9 +52,9 @@ func (c *Client)  CatchPokemon(pokename string) (string, error) {
         return "", err
     }
 
-    chance := rand.Intn(100 + respCatch.BaseExperience)
+    c.cache.Add(url, body)
 
-    if respCatch.BaseExperience > chance {
+    if ! catchPoke(respCatch) {
         return "", errors.New(pokename + " escaped!")
     }
 
@@ -45,3 +63,9 @@ func (c *Client)  CatchPokemon(pokename string) (string, error) {
     return pokename + " was caught!", nil
 }
 
+func catchPoke(respCatch RespCatch) bool {
+
+    chance := rand.Intn(100 + respCatch.BaseExperience)
+
+    return chance > respCatch.BaseExperience
+}

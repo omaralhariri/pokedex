@@ -45,7 +45,7 @@ func (c *Client)  CatchPokemon(pokename string) (string, error) {
     if err != nil {
         return "", err
     }
-
+    
     respCatch := RespCatch{}
     err = json.Unmarshal(body, &respCatch)
     if err != nil {

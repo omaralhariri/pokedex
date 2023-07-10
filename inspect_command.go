@@ -18,7 +18,7 @@ func inspectCommand(cfg *config, pokename string) error {
 
 	fmt.Println("Stats:")
 	for _, stat := range respCatch.Stats {
-		fmt.Println("   -" + stat.Stat.Name + ": " + strconv.Itoa(stat.Effort))
+		fmt.Println("   -" + stat.Stat.Name + ": " + strconv.Itoa(stat.BaseStat))
 	}
 
 	fmt.Println("Types:")

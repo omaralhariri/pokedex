@@ -48,6 +48,11 @@ func getCommands() map[string]cliCommand {
 			desc:     "Display the names of pokemons in a given area",
 			callback: exploreCommand,
 		},
+		"catch": {
+			name:     "catch",
+			desc:     "Catch the entered pokemon name",
+			callback: catchCommand,
+		},
 	}
 }
 
@@ -71,6 +76,15 @@ func startRepl(cfg *config) {
                     continue
                 }
                 area = words_slice[1]
+            }
+
+            if word == "catch" {
+                if len(words_slice) < 2 {
+                    fmt.Println("You have to provide a pokemon name to catch")
+                    continue
+                }
+                poke := words_slice[1]
+                area = poke
             }
 
             err := command.callback(cfg, area)

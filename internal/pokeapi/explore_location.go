@@ -30,6 +30,7 @@ func (c *Client) ExploreLocation(area_name string) (RespExplore, error) {
         return RespExplore{}, err
     }
 
+    defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
     if err != nil {
         return RespExplore{}, err
